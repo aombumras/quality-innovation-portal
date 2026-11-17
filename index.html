@@ -216,7 +216,7 @@
 </head>
 <body>
 
-  <!-- Header Banner (สะอาดตา ไม่รก) -->
+  <!-- Header Banner -->
   <header class="gs-header">
     <div class="container-fluid px-3 px-lg-5">
       <div class="row align-items-center g-3">
@@ -410,7 +410,7 @@
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytkpArUVs8VV4-CHcMjx2jsNMMfk6OXi7uzVGOiGcBLb8SAllO08hARmcazr_MQuRIDg/exec';
-    const TARGET_MAX_BYTES = 490 * 1024; // ตั้งเป้าให้น้อยกว่า 500 KB อัตโนมัติ
+    const TARGET_MAX_BYTES = 490 * 1024;
 
     const CARTOON_ICONS = [
       `<svg width="36" height="36" viewBox="0 0 64 64" fill="none">
@@ -570,7 +570,7 @@
                 <thead>
                   <tr>
                     <th class="text-center" style="width: 85px;">ลำดับ</th>
-                    <th style="width: 175px;">วัน-เวลาที่ส่ง</th>
+                    <th style="width: 195px;">วัน-เวลาที่ส่ง</th>
                     <th>ชื่อเรื่องผลงานวิชาการ</th>
                     <th style="width: 210px;">หน่วยงาน</th>
                     <th style="width: 210px;">ผู้ส่งผลงาน</th>
@@ -642,7 +642,7 @@
           <td class="text-center fw-bold">
             ${idx === 0 ? '<span class="badge bg-success rounded-pill">ล่าสุด</span>' : idx + 1}
           </td>
-          <td class="small text-muted">${escapeHtml(item.timestamp)}</td>
+          <td class="small text-muted text-nowrap">${escapeHtml(formatThaiDateTime(item.timestamp))}</td>
           <td class="fw-semibold text-dark">${escapeHtml(item.workTitle)}</td>
           <td><span class="badge bg-primary-subtle text-primary">${escapeHtml(item.department)}</span></td>
           <td>${escapeHtml(item.author)}</td>
@@ -684,7 +684,6 @@
       submitModalObj.show();
     }
 
-    // ตรวจสอบและบีบอัดไฟล์ PDF อัตโนมัติให้น้อยกว่า 500 KB
     async function handleFileSelect(input) {
       const file = input.files[0];
       const dropzone = document.getElementById('dropzone');
@@ -706,7 +705,6 @@
       const origKB = (file.size / 1024).toFixed(1);
       readyFileName = file.name;
 
-      // หากไฟล์เล็กกว่า 500 KB อยู่แล้ว ใช้ต้นฉบับได้เลย
       if (file.size <= TARGET_MAX_BYTES) {
         readyPdfBase64 = await fileToBase64(file);
         dropzone.classList.add('has-file');
@@ -717,7 +715,6 @@
         return;
       }
 
-      // หากไฟล์เกิน 500 KB -> บีบอัดอัตโนมัติ
       Swal.fire({
         title: 'กำลังบีบอัดไฟล์ PDF อัตโนมัติ...',
         html: `ขนาดไฟล์เดิม <strong>${(file.size / 1024 / 1024).toFixed(2)} MB</strong> กำลังปรับขนาดให้น้อยกว่า 500 KB...`,
@@ -903,12 +900,13 @@
 
     async function onUploadConfirmed(topicTitle, topicIndex, workTitle, department, timestamp, fileUrl) {
       submitModalObj.hide();
+      const formattedTime = formatThaiDateTime(timestamp);
       await Swal.fire({
         icon: 'success',
         title: 'ส่งผลงานวิชาการสำเร็จ!',
         html: `
           <div class="text-start bg-light p-3 rounded-3 small mt-2">
-            <div><strong>เวลาที่บันทึก:</strong> ${escapeHtml(timestamp)}</div>
+            <div><strong>เวลาที่บันทึก:</strong> ${escapeHtml(formattedTime)}</div>
             <div><strong>ชื่อเรื่อง:</strong> ${escapeHtml(workTitle)}</div>
             <div><strong>หน่วยงาน:</strong> ${escapeHtml(department)}</div>
             ${fileUrl ? `<div class="mt-2"><a href="${fileUrl}" target="_blank" class="btn btn-sm btn-outline-danger"><i class="bi bi-file-pdf"></i> เปิดดูไฟล์ PDF</a></div>` : ''}
@@ -965,11 +963,41 @@
       });
     }
 
+    // แปลงวันที่กำหนดส่ง (เช่น 2026-11-30 หรือ ISO String) -> 30 พ.ย. 2569
     function formatThaiDate(dateStr) {
       if (!dateStr) return '-';
-      const d = new Date(dateStr);
       const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
       return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543}`;
+    }
+
+    // แปลงวัน-เวลาที่ส่ง (เช่น 2026-11-17T03:51:51.000Z) -> 17 พ.ย. 2569 10:51:51 น.
+    function formatThaiDateTime(dateInput) {
+      if (!dateInput) return '-';
+      const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      
+      // รองรับกรณีที่เป็นรูปแบบ ISO เช่น 2026-11-17T03:51:51.000Z
+      const d = new Date(dateInput);
+      if (!isNaN(d.getTime()) && dateInput.toString().includes('T')) {
+        const thaiTimeStr = d.toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false });
+        // thaiTimeStr format: "17/11/2026, 10:51:51"
+        const [datePart, timePart] = thaiTimeStr.split(', ');
+        const [day, month, year] = datePart.split('/');
+        return `${parseInt(day, 10)} ${months[parseInt(month, 10) - 1]} ${parseInt(year, 10) + 543} ${timePart} น.`;
+      }
+
+      // รองรับกรณีที่เป็นข้อความ dd/MM/yyyy HH:mm:ss จากชีต
+      const match = dateInput.toString().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{2}:\d{2}:\d{2})/);
+      if (match) {
+        const day = parseInt(match[1], 10);
+        const month = parseInt(match[2], 10) - 1;
+        let year = parseInt(match[3], 10);
+        if (year < 2500) year += 543;
+        return `${day} ${months[month]} ${year} ${match[4]} น.`;
+      }
+
+      return dateInput.toString();
     }
 
     function escapeHtml(text) {
