@@ -16,6 +16,10 @@
   <!-- SweetAlert2 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
+  <!-- PDF.js & jsPDF สำหรับบีบอัดไฟล์ PDF อัตโนมัติบนเบราว์เซอร์ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
     :root {
       --navy-primary: #0f294a;
@@ -78,7 +82,7 @@
       z-index: 10;
     }
 
-    /* Full-Width Topic Box (รวมหัวข้อ + กำหนดส่ง + ตารางไว้ในกล่องเดียว) */
+    /* Full-Width Topic Box */
     .topic-section-box {
       width: 100%;
       background: #ffffff;
@@ -225,7 +229,6 @@
       border-radius: 20px !important;
     }
 
-    /* Mobile Responsive Adjustments */
     @media (max-width: 768px) {
       .topic-box-header {
         padding: 1.1rem 1rem 1.1rem 1.2rem;
@@ -247,7 +250,7 @@
 </head>
 <body>
 
-  <!-- Header Banner (Full Width) -->
+  <!-- Header Banner -->
   <header class="gs-header">
     <div class="container-fluid px-3 px-lg-5">
       <div class="row align-items-center g-3">
@@ -259,7 +262,7 @@
           </div>
           <h2 class="fw-bold mb-1">ระบบส่งผลงานวิชาการออนไลน์</h2>
           <p class="text-light opacity-75 mb-0 small">
-            แนบไฟล์ PDF ตามเกณฑ์ สรพ. (ขนาดไม่เกิน 500 KB) จัดเรียงหัวข้อตามกำหนดส่ง และแยกตารางผลงานตามหัวข้ออัตโนมัติ
+            ระบบบีบอัดไฟล์ PDF อัตโนมัติให้ไม่เกิน 500 KB ตามเกณฑ์ สรพ. พร้อมจัดเรียงตารางแยกตามหัวข้อทันที
           </p>
         </div>
 
@@ -294,7 +297,7 @@
     </div>
   </header>
 
-  <!-- Main Container (Full Width 100%) -->
+  <!-- Main Container -->
   <main class="container-fluid px-3 px-lg-5 pb-5 flex-grow-1">
     
     <!-- แถบสถานะรวม -->
@@ -303,8 +306,8 @@
         <i class="bi bi-layers-fill text-primary fs-5"></i>
         <span class="fw-semibold text-dark">รายการหัวข้อและตารางผลงาน</span>
         <span class="badge bg-primary-subtle text-primary rounded-pill">เรียงตามกำหนดส่งใกล้สุด</span>
-        <span class="badge bg-warning-subtle text-dark border border-warning-subtle rounded-pill">
-          <i class="bi bi-file-earmark-pdf-fill text-danger me-1"></i>เกณฑ์ สรพ. PDF ≤ 500 KB
+        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
+          <i class="bi bi-magic me-1"></i>ระบบย่อไฟล์ PDF อัตโนมัติ &lt; 500 KB
         </span>
       </div>
       <div>
@@ -314,7 +317,7 @@
       </div>
     </div>
 
-    <!-- พื้นที่แสดงกล่องหัวข้อ + ตารางแยกตามแต่ละงาน (เต็มจอ) -->
+    <!-- พื้นที่แสดงกล่องหัวข้อ + ตารางแยกตามแต่ละงาน -->
     <div id="sectionsContainer">
       <div class="bg-white rounded-4 shadow-sm text-center py-5">
         <div class="spinner-border text-primary" role="status"></div>
@@ -377,24 +380,24 @@
 
             <div class="mb-2">
               <label class="form-label fw-semibold">
-                แนบไฟล์ผลงาน PDF <span class="badge bg-danger-subtle text-danger ms-1">ขนาดไม่เกิน 500 KB ตามเกณฑ์ สรพ.</span> <span class="text-danger">*</span>
+                แนบไฟล์ผลงาน PDF <span class="badge bg-success-subtle text-success ms-1"><i class="bi bi-magic"></i> บีบอัดอัตโนมัติให้น้อยกว่า 500 KB</span> <span class="text-danger">*</span>
               </label>
               <div class="pdf-dropzone" id="dropzone" onclick="document.getElementById('pdfFile').click()">
-                <input type="file" id="pdfFile" accept="application/pdf" class="d-none" onchange="handleFileSelect(this)" required>
+                <input type="file" id="pdfFile" accept="application/pdf" class="d-none" onchange="handleFileSelect(this)">
                 <svg width="46" height="46" viewBox="0 0 64 64" fill="none" class="mb-2">
                   <rect x="14" y="8" width="36" height="48" rx="6" fill="#FEE2E2" stroke="#EF4444" stroke-width="2.5"/>
                   <path d="M38 8V20H50" stroke="#EF4444" stroke-width="2.5"/>
                   <rect x="19" y="30" width="26" height="14" rx="3" fill="#EF4444"/>
                   <text x="32" y="40" fill="white" font-size="9" font-weight="bold" text-anchor="middle" font-family="sans-serif">PDF</text>
                 </svg>
-                <div id="fileLabel" class="fw-medium text-dark small">คลิกเพื่อเลือกไฟล์ PDF (ขนาดไม่เกิน 500 KB)</div>
+                <div id="fileLabel" class="fw-medium text-dark small">คลิกเพื่อเลือกไฟล์ PDF (หากเกิน 500 KB ระบบจะย่อขนาดให้อัตโนมัติ)</div>
               </div>
             </div>
           </div>
 
           <div class="modal-footer bg-light rounded-bottom-4">
             <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">ยกเลิก</button>
-            <button type="submit" class="btn btn-submit-work">
+            <button type="submit" class="btn btn-submit-work" id="btnConfirmSubmit">
               <i class="bi bi-cloud-arrow-up-fill me-1"></i> ยืนยันการส่งผลงาน
             </button>
           </div>
@@ -450,8 +453,11 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
+    // ตั้งค่า Worker ของ PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytkpArUVs8VV4-CHcMjx2jsNMMfk6OXi7uzVGOiGcBLb8SAllO08hARmcazr_MQuRIDg/exec';
-    const MAX_FILE_SIZE_KB = 500;
+    const TARGET_MAX_BYTES = 490 * 1024; // ตั้งเป้าให้น้อยกว่า 500 KB (490 KB) เพื่อความปลอดภัย 100%
 
     const CARTOON_ICONS = [
       `<svg width="36" height="36" viewBox="0 0 64 64" fill="none">
@@ -485,7 +491,9 @@
     ];
 
     let submitModalObj, adminModalObj;
-    let topicSubmissionsCache = {}; // เก็บข้อมูลแต่ละหัวข้อแยกกันไว้สำหรับค้นหา
+    let topicSubmissionsCache = {};
+    let readyPdfBase64 = null; // เก็บ Base64 ของไฟล์ PDF ที่พร้อมส่ง (บีบอัดแล้ว)
+    let readyFileName = '';
 
     document.addEventListener('DOMContentLoaded', () => {
       submitModalObj = new bootstrap.Modal(document.getElementById('submitModal'));
@@ -500,7 +508,6 @@
       }
     });
 
-    // โหลดหัวข้อทั้งหมด + ดึงตารางของแต่ละหัวข้อแยกกล่องกัน
     async function loadAllData() {
       const container = document.getElementById('sectionsContainer');
       container.innerHTML = `
@@ -529,7 +536,6 @@
       }
     }
 
-    // สร้างกล่องเต็มจอแยกตามแต่ละหัวข้อ (รวมหัวข้อ + กำหนดส่ง + ตารางไว้ในกล่องเดียวกัน)
     function renderAllTopicSections(topics) {
       const container = document.getElementById('sectionsContainer');
       if (!topics || topics.length === 0) {
@@ -569,7 +575,6 @@
 
         return `
           <section class="topic-section-box ${boxClass}" id="topic-box-${index}">
-            <!-- ส่วนหัวของกล่อง: ชื่อหัวข้อ + กำหนดส่ง + ปุ่มส่งผลงาน -->
             <div class="topic-box-header">
               <div class="topic-box-accent"></div>
               <div class="row align-items-center g-3">
@@ -592,7 +597,6 @@
                   </div>
                 </div>
 
-                <!-- ส่วนค้นหาเฉพาะหัวข้อนี้ + ปุ่มส่งผลงาน -->
                 <div class="col-12 col-lg-5">
                   <div class="d-flex flex-column flex-sm-row justify-content-lg-end align-items-stretch align-items-sm-center gap-2">
                     <div class="input-group" style="max-width: 260px;">
@@ -608,7 +612,6 @@
               </div>
             </div>
 
-            <!-- ส่วนตารางผลงานของหัวข้อนี้โดยเฉพาะ (เต็มจอ 100%) -->
             <div class="table-responsive">
               <table class="table topic-table align-middle">
                 <thead>
@@ -634,13 +637,11 @@
         `;
       }).join('');
 
-      // โหลดรายการผลงานเข้าตารางของแต่ละกล่องแบบขนาน (Parallel) เพื่อความเร็วสูงสุด
       topics.forEach((topic, index) => {
         fetchTopicSubmissions(topic.title, index);
       });
     }
 
-    // ดึงข้อมูลผลงานของแต่ละหัวข้อมาใส่ในตารางของกล่องนั้นๆ
     async function fetchTopicSubmissions(topicTitle, index) {
       const tbody = document.getElementById(`tbody-topic-${index}`);
       if (!tbody) return;
@@ -674,7 +675,7 @@
           <tr>
             <td colspan="6" class="text-center py-4 text-muted small">
               <i class="bi bi-inbox fs-4 d-block mb-1 opacity-50"></i>
-              ยังไม่มีผู้ส่งผลงานในหัวข้อนี้ (เป็นคนแรกที่ส่งผลงานได้เลย!)
+              ยังไม่มีผู้ส่งผลงานในหัวข้อนี้
             </td>
           </tr>
         `;
@@ -699,7 +700,6 @@
       `).join('');
     }
 
-    // ค้นหาเฉพาะในตารางของหัวข้อนั้นๆ
     function filterTopicTable(index, keyword) {
       const allRows = topicSubmissionsCache[index] || [];
       const q = keyword.toLowerCase().trim();
@@ -717,16 +717,20 @@
 
     function openSubmitModal(topicTitle, index) {
       document.getElementById('submissionForm').reset();
+      readyPdfBase64 = null;
+      readyFileName = '';
       document.getElementById('selectedTopicTitle').value = topicTitle;
       document.getElementById('selectedTopicIndex').value = index;
       document.getElementById('modalTopicSubtitle').textContent = 'หัวข้อ: ' + topicTitle;
-      document.getElementById('fileLabel').innerHTML = 'คลิกเพื่อเลือกไฟล์ PDF (ขนาดไม่เกิน 500 KB)';
+      document.getElementById('fileLabel').innerHTML = 'คลิกเพื่อเลือกไฟล์ PDF (หากเกิน 500 KB ระบบจะย่อขนาดให้อัตโนมัติ)';
       document.getElementById('dropzone').classList.remove('has-file');
       submitModalObj.show();
     }
 
-    // ตรวจสอบไฟล์ PDF (จำกัดไม่เกิน 500 KB ตามข้อกำหนด สรพ.)
-    function handleFileSelect(input) {
+    // =========================================================
+    // ระบบตรวจสอบและบีบอัดไฟล์ PDF อัตโนมัติให้น้อยกว่า 500 KB
+    // =========================================================
+    async function handleFileSelect(input) {
       const file = input.files[0];
       const dropzone = document.getElementById('dropzone');
       const label = document.getElementById('fileLabel');
@@ -740,32 +744,142 @@
           confirmButtonColor: '#0f294a'
         });
         input.value = '';
+        readyPdfBase64 = null;
         return;
       }
 
-      const fileSizeKB = file.size / 1024;
-      if (fileSizeKB > MAX_FILE_SIZE_KB) {
+      const origKB = (file.size / 1024).toFixed(1);
+      readyFileName = file.name;
+
+      // กรณีไฟล์เดิมเล็กกว่า 500 KB อยู่แล้ว ใช้ต้นฉบับได้เลย
+      if (file.size <= TARGET_MAX_BYTES) {
+        readyPdfBase64 = await fileToBase64(file);
+        dropzone.classList.add('has-file');
+        label.innerHTML = `
+          <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i>${escapeHtml(file.name)}</span>
+          <div class="small text-muted mt-1">ขนาดไฟล์: <strong>${origKB} KB</strong> (ผ่านเกณฑ์ไม่เกิน 500 KB)</div>
+        `;
+        return;
+      }
+
+      // กรณีไฟล์เกิน 500 KB -> บีบอัดอัตโนมัติ
+      Swal.fire({
+        title: 'กำลังบีบอัดไฟล์ PDF อัตโนมัติ...',
+        html: `ขนาดไฟล์เดิม <strong>${(file.size / 1024 / 1024).toFixed(2)} MB (${origKB} KB)</strong><br>กำลังปรับขนาดให้น้อยกว่า 500 KB ตามเกณฑ์ สรพ...`,
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
+
+      try {
+        const compressedResult = await compressPdfUnder500KB(file);
+        Swal.close();
+
+        readyPdfBase64 = compressedResult.base64;
+        const newKB = (compressedResult.byteLength / 1024).toFixed(1);
+
+        dropzone.classList.add('has-file');
+        label.innerHTML = `
+          <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i>${escapeHtml(file.name)}</span>
+          <div class="small text-primary mt-1">
+            <i class="bi bi-magic me-1"></i>บีบอัดอัตโนมัติสำเร็จ: <del class="text-muted">${origKB} KB</del> &rarr; <strong>${newKB} KB</strong>
+          </div>
+        `;
+      } catch (err) {
         Swal.fire({
           icon: 'error',
-          title: 'ขนาดไฟล์เกิน 500 KB',
-          html: `ไฟล์ของคุณมีขนาด <strong>${fileSizeKB.toFixed(1)} KB</strong><br>ตามข้อกำหนด สรพ. กรุณาย่อขนาดไฟล์ PDF ให้ไม่เกิน <strong>500 KB</strong> ก่อนอัปโหลดครับ`,
+          title: 'ไม่สามารถบีบอัดไฟล์ได้',
+          text: 'ไฟล์มีความละเอียดสูงหรือมีจำนวนหน้ามากเกินไป กรุณาย่อไฟล์เบื้องต้นก่อนเลือกอีกครั้ง (' + err.message + ')',
           confirmButtonColor: '#0f294a'
         });
         input.value = '';
+        readyPdfBase64 = null;
         dropzone.classList.remove('has-file');
-        label.innerHTML = 'คลิกเพื่อเลือกไฟล์ PDF (ขนาดไม่เกิน 500 KB)';
-        return;
+      }
+    }
+
+    // ฟังก์ชันบีบอัด PDF ด้วย PDF.js + jsPDF วนปรับความละเอียดจนกว่าจะ < 500 KB
+    async function compressPdfUnder500KB(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const numPages = pdfDoc.numPages;
+      const { jsPDF } = window.jspdf;
+
+      // ระดับการบีบอัดจากคมชัดปานกลาง -> บีบอัดสูง เพื่อให้ได้ขนาด < 490 KB
+      const presets = [
+        { scale: 1.3, quality: 0.65 },
+        { scale: 1.1, quality: 0.55 },
+        { scale: 0.95, quality: 0.45 },
+        { scale: 0.85, quality: 0.38 },
+        { scale: 0.75, quality: 0.30 },
+        { scale: 0.65, quality: 0.25 }
+      ];
+
+      // เรนเดอร์แต่ละหน้าเป็น Canvas เตรียมไว้ก่อน
+      let bestBase64 = null;
+      let bestBytes = Infinity;
+
+      for (const preset of presets) {
+        let outPdf = null;
+
+        for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+          const page = await pdfDoc.getPage(pageNum);
+          const viewport = page.getViewport({ scale: preset.scale });
+
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+          const imgData = canvas.toDataURL('image/jpeg', preset.quality);
+
+          const orientation = viewport.width > viewport.height ? 'l' : 'p';
+          const pageWidthMm = viewport.width * 0.264583;
+          const pageHeightMm = viewport.height * 0.264583;
+
+          if (pageNum === 1) {
+            outPdf = new jsPDF({
+              orientation: orientation,
+              unit: 'mm',
+              format: [pageWidthMm, pageHeightMm],
+              compress: true
+            });
+          } else {
+            outPdf.addPage([pageWidthMm, pageHeightMm], orientation);
+          }
+
+          outPdf.addImage(imgData, 'JPEG', 0, 0, pageWidthMm, pageHeightMm, undefined, 'FAST');
+        }
+
+        const dataUri = outPdf.output('datauristring');
+        const base64Str = dataUri.split(',')[1];
+        const byteLen = Math.ceil((base64Str.length * 3) / 4);
+
+        if (byteLen < bestBytes) {
+          bestBytes = byteLen;
+          bestBase64 = base64Str;
+        }
+
+        // ถ้าขนาดต่ำกว่า 490 KB แล้ว หยุดทันทีเพื่อรักษาความคมชัดสูงสุดเท่าที่เป็นไปได้
+        if (byteLen <= TARGET_MAX_BYTES) {
+          return { base64: base64Str, byteLength: byteLen };
+        }
       }
 
-      dropzone.classList.add('has-file');
-      label.innerHTML = `<span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i>${escapeHtml(file.name)}</span> (${fileSizeKB.toFixed(1)} KB)`;
+      if (bestBytes <= 500 * 1024) {
+        return { base64: bestBase64, byteLength: bestBytes };
+      }
+
+      throw new Error(`ขนาดเล็กสุดที่ทำได้คือ ${(bestBytes / 1024).toFixed(0)} KB ซึ่งยังเกิน 500 KB`);
     }
 
     // บันทึกและอัปโหลดผลงาน
     async function handleSubmission(e) {
       e.preventDefault();
-      const file = document.getElementById('pdfFile').files[0];
-      if (!file) return;
+      if (!readyPdfBase64) {
+        Swal.fire('กรุณาแนบไฟล์ PDF', 'โปรดเลือกไฟล์ผลงาน PDF ก่อนกดยืนยันครับ', 'warning');
+        return;
+      }
 
       Swal.fire({
         title: 'กำลังอัปโหลดผลงาน...',
@@ -774,7 +888,6 @@
       });
 
       try {
-        const base64Data = await fileToBase64(file);
         const topicTitle = document.getElementById('selectedTopicTitle').value;
         const topicIndex = document.getElementById('selectedTopicIndex').value;
 
@@ -784,8 +897,8 @@
           workTitle: document.getElementById('workTitle').value.trim(),
           department: document.getElementById('department').value.trim(),
           author: document.getElementById('author').value.trim(),
-          fileName: file.name,
-          fileBase64: base64Data
+          fileName: readyFileName,
+          fileBase64: readyPdfBase64
         };
 
         const res = await fetch(SCRIPT_URL, {
@@ -811,7 +924,6 @@
             confirmButtonText: 'ตกลง',
             confirmButtonColor: '#0f294a'
           });
-          // อัปเดตตารางเฉพาะของหัวข้อนั้นทันทีและเลื่อนไปที่กล่องนั้น
           await fetchTopicSubmissions(topicTitle, topicIndex);
           const targetBox = document.getElementById(`topic-box-${topicIndex}`);
           if (targetBox) targetBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
