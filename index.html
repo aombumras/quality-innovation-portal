@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
-  <!-- PDF.js & jsPDF สำหรับบีบอัดไฟล์ PDF อัตโนมัติ -->
+  <!-- PDF.js & jsPDF สำหรับบีบอัดไฟล์ PDF กรณีผู้ใช้เลือกโหมด < 500 KB -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -186,6 +186,33 @@
     .topic-table tbody tr:last-child td { border-bottom: none; }
     .topic-table tbody tr:hover { background-color: #f8fafc; }
 
+    /* Mode Selector Cards */
+    .mode-option-card {
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      background-color: #ffffff;
+      height: 100%;
+    }
+
+    .mode-option-card:hover {
+      border-color: #93c5fd;
+      background-color: #f8fafc;
+    }
+
+    .btn-check:checked + .mode-option-card {
+      border-color: var(--navy-primary);
+      background-color: #eff6ff;
+      box-shadow: 0 4px 10px rgba(15, 41, 74, 0.08);
+    }
+
+    .btn-check:checked + .mode-option-card.mode-compress {
+      border-color: var(--teal-soft);
+      background-color: #f0fdfa;
+    }
+
     .pdf-dropzone {
       border: 2px dashed #93c5fd;
       border-radius: 14px;
@@ -334,6 +361,37 @@
               </div>
             </div>
 
+            <!-- ตัวเลือกโหมดจัดการขนาดไฟล์ PDF -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">ตัวเลือกขนาดไฟล์ PDF ก่อนอัปโหลด</label>
+              <div class="row g-2">
+                <div class="col-12 col-sm-6">
+                  <input type="radio" class="btn-check" name="pdfSizeMode" id="modeOriginal" value="original" checked onchange="onModeChange()">
+                  <label class="mode-option-card d-block" for="modeOriginal">
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="bi bi-file-earmark-check-fill text-primary fs-5"></i>
+                      <div>
+                        <div class="fw-semibold text-dark small">ไม่บีบอัด (ไฟล์ต้นฉบับ)</div>
+                        <div class="text-muted" style="font-size: 0.78rem;">รักษาความคมชัดสูงสุด (ไม่เกิน 15 MB)</div>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <input type="radio" class="btn-check" name="pdfSizeMode" id="modeCompress500" value="compress" onchange="onModeChange()">
+                  <label class="mode-option-card mode-compress d-block" for="modeCompress500">
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="bi bi-magic text-success fs-5"></i>
+                      <div>
+                        <div class="fw-semibold text-dark small">บีบอัดให้น้อยกว่า 500 KB</div>
+                        <div class="text-muted" style="font-size: 0.78rem;">ปรับขนาดอัตโนมัติตามเกณฑ์ สรพ.</div>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
             <div class="mb-2">
               <label class="form-label fw-semibold">
                 แนบไฟล์ผลงาน PDF <span class="text-danger">*</span>
@@ -346,7 +404,7 @@
                   <rect x="19" y="30" width="26" height="14" rx="3" fill="#EF4444"/>
                   <text x="32" y="40" fill="white" font-size="9" font-weight="bold" text-anchor="middle" font-family="sans-serif">PDF</text>
                 </svg>
-                <div id="fileLabel" class="fw-medium text-dark small">คลิกเพื่อเลือกไฟล์ PDF (ระบบปรับขนาดให้น้อยกว่า 500 KB อัตโนมัติ)</div>
+                <div id="fileLabel" class="fw-medium text-dark small">คลิกเพื่อเลือกไฟล์ PDF (ขนาดไม่เกิน 15 MB)</div>
               </div>
             </div>
           </div>
@@ -410,6 +468,7 @@
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytkpArUVs8VV4-CHcMjx2jsNMMfk6OXi7uzVGOiGcBLb8SAllO08hARmcazr_MQuRIDg/exec';
+    const MAX_FILE_SIZE_MB = 15;
     const TARGET_MAX_BYTES = 490 * 1024;
 
     const CARTOON_ICONS = [
@@ -445,6 +504,7 @@
 
     let submitModalObj, adminModalObj;
     let topicSubmissionsCache = {};
+    let selectedRawFile = null; // เก็บไฟล์ต้นฉบับที่ผู้ใช้เลือกไว้ เผื่อสลับโหมดไปมา
     let readyPdfBase64 = null;
     let readyFileName = '';
     let isSubmitting = false;
@@ -672,22 +732,29 @@
 
     function openSubmitModal(topicTitle, index) {
       document.getElementById('submissionForm').reset();
+      selectedRawFile = null;
       readyPdfBase64 = null;
       readyFileName = '';
       isSubmitting = false;
+      document.getElementById('modeOriginal').checked = true;
       document.getElementById('btnConfirmSubmit').disabled = false;
       document.getElementById('selectedTopicTitle').value = topicTitle;
       document.getElementById('selectedTopicIndex').value = index;
       document.getElementById('modalTopicSubtitle').textContent = 'หัวข้อ: ' + topicTitle;
-      document.getElementById('fileLabel').innerHTML = 'คลิกเพื่อเลือกไฟล์ PDF (ระบบปรับขนาดให้น้อยกว่า 500 KB อัตโนมัติ)';
+      document.getElementById('fileLabel').innerHTML = 'คลิกเพื่อเลือกไฟล์ PDF (ขนาดไม่เกิน 15 MB)';
       document.getElementById('dropzone').classList.remove('has-file');
       submitModalObj.show();
     }
 
+    // เมื่อสลับปุ่มเลือกว่าจะ บีบอัด หรือ ไม่บีบอัด
+    async function onModeChange() {
+      if (selectedRawFile) {
+        await processSelectedFile(selectedRawFile);
+      }
+    }
+
     async function handleFileSelect(input) {
       const file = input.files[0];
-      const dropzone = document.getElementById('dropzone');
-      const label = document.getElementById('fileLabel');
       if (!file) return;
 
       if (file.type !== 'application/pdf') {
@@ -698,26 +765,65 @@
           confirmButtonColor: '#0f294a'
         });
         input.value = '';
+        selectedRawFile = null;
         readyPdfBase64 = null;
         return;
       }
 
-      const origKB = (file.size / 1024).toFixed(1);
-      readyFileName = file.name;
+      if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'ไฟล์มีขนาดใหญ่เกินไป',
+          text: `กรุณาเลือกไฟล์ PDF ขนาดไม่เกิน ${MAX_FILE_SIZE_MB} MB ครับ`,
+          confirmButtonColor: '#0f294a'
+        });
+        input.value = '';
+        selectedRawFile = null;
+        readyPdfBase64 = null;
+        return;
+      }
 
+      selectedRawFile = file;
+      await processSelectedFile(file);
+    }
+
+    // ประมวลผลไฟล์ตามโหมดที่ผู้ใช้เลือก (ไม่บีบอัด หรือ บีบอัด < 500 KB)
+    async function processSelectedFile(file) {
+      const dropzone = document.getElementById('dropzone');
+      const label = document.getElementById('fileLabel');
+      const isCompressMode = document.getElementById('modeCompress500').checked;
+
+      readyFileName = file.name;
+      const origKB = (file.size / 1024).toFixed(1);
+      const origSizeText = file.size >= 1024 * 1024
+        ? `${(file.size / 1024 / 1024).toFixed(2)} MB`
+        : `${origKB} KB`;
+
+      // โหมด 1: ไม่บีบอัด (ใช้ไฟล์ต้นฉบับคมชัดสูงสุด)
+      if (!isCompressMode) {
+        readyPdfBase64 = await fileToBase64(file);
+        dropzone.classList.add('has-file');
+        label.innerHTML = `
+          <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i>${escapeHtml(file.name)}</span>
+          <div class="small text-muted mt-1">ไฟล์ต้นฉบับ: <strong>${origSizeText}</strong> (ไม่บีบอัด)</div>
+        `;
+        return;
+      }
+
+      // โหมด 2: บีบอัดให้น้อยกว่า 500 KB
       if (file.size <= TARGET_MAX_BYTES) {
         readyPdfBase64 = await fileToBase64(file);
         dropzone.classList.add('has-file');
         label.innerHTML = `
           <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i>${escapeHtml(file.name)}</span>
-          <div class="small text-muted mt-1">ขนาดไฟล์: <strong>${origKB} KB</strong></div>
+          <div class="small text-success mt-1">ขนาดไฟล์: <strong>${origKB} KB</strong> (น้อยกว่า 500 KB อยู่แล้ว)</div>
         `;
         return;
       }
 
       Swal.fire({
         title: 'กำลังบีบอัดไฟล์ PDF อัตโนมัติ...',
-        html: `ขนาดไฟล์เดิม <strong>${(file.size / 1024 / 1024).toFixed(2)} MB</strong> กำลังปรับขนาดให้น้อยกว่า 500 KB...`,
+        html: `ขนาดไฟล์เดิม <strong>${origSizeText}</strong> กำลังปรับขนาดให้น้อยกว่า 500 KB...`,
         allowOutsideClick: false,
         didOpen: () => { Swal.showLoading(); }
       });
@@ -733,19 +839,18 @@
         label.innerHTML = `
           <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i>${escapeHtml(file.name)}</span>
           <div class="small text-primary mt-1">
-            <i class="bi bi-magic me-1"></i>ปรับขนาดอัตโนมัติสำเร็จ: <del class="text-muted">${origKB} KB</del> &rarr; <strong>${newKB} KB</strong>
+            <i class="bi bi-magic me-1"></i>บีบอัดสำเร็จ: <del class="text-muted">${origSizeText}</del> &rarr; <strong>${newKB} KB</strong>
           </div>
         `;
       } catch (err) {
         Swal.fire({
           icon: 'error',
-          title: 'ไม่สามารถบีบอัดไฟล์ได้',
-          text: err.message,
+          title: 'ไม่สามารถบีบอัดไฟล์ให้ต่ำกว่า 500 KB ได้',
+          text: err.message + ' (คุณสามารถสลับไปเลือกโหมด "ไม่บีบอัด" เพื่ออัปโหลดไฟล์ต้นฉบับแทนได้ครับ)',
           confirmButtonColor: '#0f294a'
         });
-        input.value = '';
-        readyPdfBase64 = null;
-        dropzone.classList.remove('has-file');
+        document.getElementById('modeOriginal').checked = true;
+        await processSelectedFile(file);
       }
     }
 
@@ -818,7 +923,7 @@
         return { base64: bestBase64, byteLength: bestBytes };
       }
 
-      throw new Error(`ขนาดเล็กสุดที่ทำได้คือ ${(bestBytes / 1024).toFixed(0)} KB ซึ่งยังเกิน 500 KB`);
+      throw new Error(`ขนาดเล็กสุดที่ทำได้คือ ${(bestBytes / 1024).toFixed(0)} KB`);
     }
 
     async function handleSubmission(e) {
@@ -963,7 +1068,6 @@
       });
     }
 
-    // แปลงวันที่กำหนดส่ง (เช่น 2026-11-30 หรือ ISO String) -> 30 พ.ย. 2569
     function formatThaiDate(dateStr) {
       if (!dateStr) return '-';
       const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
@@ -972,22 +1076,18 @@
       return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543}`;
     }
 
-    // แปลงวัน-เวลาที่ส่ง (เช่น 2026-11-17T03:51:51.000Z) -> 17 พ.ย. 2569 10:51:51 น.
     function formatThaiDateTime(dateInput) {
       if (!dateInput) return '-';
       const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
       
-      // รองรับกรณีที่เป็นรูปแบบ ISO เช่น 2026-11-17T03:51:51.000Z
       const d = new Date(dateInput);
       if (!isNaN(d.getTime()) && dateInput.toString().includes('T')) {
         const thaiTimeStr = d.toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', hour12: false });
-        // thaiTimeStr format: "17/11/2026, 10:51:51"
         const [datePart, timePart] = thaiTimeStr.split(', ');
         const [day, month, year] = datePart.split('/');
         return `${parseInt(day, 10)} ${months[parseInt(month, 10) - 1]} ${parseInt(year, 10) + 543} ${timePart} น.`;
       }
 
-      // รองรับกรณีที่เป็นข้อความ dd/MM/yyyy HH:mm:ss จากชีต
       const match = dateInput.toString().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{2}:\d{2}:\d{2})/);
       if (match) {
         const day = parseInt(match[1], 10);
