@@ -22,7 +22,7 @@
       --navy-secondary: #1e4273;
       --gold-accent: #f59e0b;
       --teal-soft: #0d9488;
-      --bg-surface: #f1f5f9;
+      --bg-surface: #eef2f6;
     }
 
     * {
@@ -47,7 +47,7 @@
       width: 100%;
       background: linear-gradient(135deg, var(--navy-primary) 0%, var(--navy-secondary) 100%);
       color: white;
-      padding: 2rem 1rem 3.2rem 1rem;
+      padding: 1.75rem 1rem 2.75rem 1rem;
       border-bottom: 4px solid var(--gold-accent);
       position: relative;
       overflow: hidden;
@@ -55,7 +55,7 @@
 
     @keyframes floatMascot {
       0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-7px) rotate(2deg); }
+      50% { transform: translateY(-6px) rotate(2deg); }
     }
 
     .mascot-float {
@@ -68,78 +68,140 @@
       user-select: none;
     }
 
-    /* Control Bar */
+    /* Top Summary / Control Bar */
     .control-bar {
       background: #ffffff;
       border-radius: 16px;
-      box-shadow: 0 6px 20px rgba(15, 41, 74, 0.08);
-      margin-top: -1.85rem;
+      box-shadow: 0 4px 18px rgba(15, 41, 74, 0.07);
+      margin-top: -1.65rem;
       position: relative;
       z-index: 10;
     }
 
-    /* Topic Card */
-    .topic-card {
-      border: none;
-      border-radius: 18px;
+    /* Full-Width Topic Box (รวมหัวข้อ + กำหนดส่ง + ตารางไว้ในกล่องเดียว) */
+    .topic-section-box {
+      width: 100%;
       background: #ffffff;
-      box-shadow: 0 4px 16px rgba(15, 41, 74, 0.06);
-      transition: all 0.25s ease;
+      border-radius: 20px;
+      box-shadow: 0 8px 26px rgba(15, 41, 74, 0.08);
+      border: 1px solid #dbe4ee;
       overflow: hidden;
-      height: 100%;
+      margin-bottom: 2.25rem;
+      transition: box-shadow 0.25s ease;
     }
 
-    .topic-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 24px rgba(15, 41, 74, 0.12);
+    .topic-section-box:hover {
+      box-shadow: 0 12px 32px rgba(15, 41, 74, 0.12);
     }
 
-    .topic-card.active-topic {
-      ring: 3px solid var(--gold-accent);
-      box-shadow: 0 0 0 3px var(--gold-accent), 0 12px 24px rgba(15, 41, 74, 0.15);
+    .topic-box-header {
+      background: linear-gradient(90deg, #ffffff 0%, #f8fafc 100%);
+      border-bottom: 2px solid #e2e8f0;
+      padding: 1.35rem 1.5rem;
+      position: relative;
     }
 
-    .card-top-bar {
-      height: 6px;
-      background: linear-gradient(90deg, var(--navy-primary), var(--teal-soft));
+    .topic-box-accent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 7px;
+      background: linear-gradient(180deg, var(--navy-primary), var(--teal-soft));
     }
 
-    .topic-card.urgent .card-top-bar {
-      background: linear-gradient(90deg, #dc2626, var(--gold-accent));
+    .topic-section-box.urgent .topic-box-accent {
+      background: linear-gradient(180deg, #dc2626, var(--gold-accent));
     }
 
-    .topic-card.expired {
-      opacity: 0.78;
-      background: #f8fafc;
-    }
-
-    .topic-card.expired .card-top-bar {
+    .topic-section-box.expired .topic-box-accent {
       background: #94a3b8;
     }
 
-    .cartoon-badge-box {
-      width: 58px;
-      height: 58px;
+    .cartoon-icon-wrap {
+      width: 62px;
+      height: 62px;
       border-radius: 16px;
       background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 2px solid #bfdbfe;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      border: 2px solid #bfdbfe;
     }
 
-    .btn-navy {
-      background-color: var(--navy-primary);
-      color: white;
-      border-radius: 10px;
-      font-weight: 500;
+    .deadline-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      padding: 0.35rem 0.85rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.88rem;
+    }
+
+    .topic-section-box.expired .deadline-pill {
+      background-color: #f1f5f9;
+      color: #64748b;
+      border-color: #cbd5e1;
+    }
+
+    .btn-submit-work {
+      background: linear-gradient(135deg, var(--navy-primary) 0%, var(--navy-secondary) 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 0.65rem 1.4rem;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(15, 41, 74, 0.2);
       transition: all 0.2s;
+      white-space: nowrap;
     }
 
-    .btn-navy:hover {
-      background-color: var(--navy-secondary);
+    .btn-submit-work:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(15, 41, 74, 0.28);
       color: #fff;
+    }
+
+    .btn-submit-work:disabled {
+      background: #94a3b8;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* Table inside Topic Box */
+    .topic-table {
+      margin-bottom: 0;
+      width: 100%;
+    }
+
+    .topic-table thead th {
+      background-color: var(--navy-primary);
+      color: #ffffff;
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 0.85rem 1rem;
+      white-space: nowrap;
+      border: none;
+    }
+
+    .topic-table tbody td {
+      padding: 0.85rem 1rem;
+      vertical-align: middle;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.93rem;
+    }
+
+    .topic-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .topic-table tbody tr:hover {
+      background-color: #f8fafc;
     }
 
     /* Dropzone */
@@ -158,44 +220,27 @@
       background-color: #f0fdfa;
     }
 
-    /* Full-Screen Table Section */
-    .full-table-card {
-      background: #ffffff;
-      border-radius: 20px;
-      box-shadow: 0 8px 28px rgba(15, 41, 74, 0.08);
-      border: 1px solid #e2e8f0;
-      overflow: hidden;
-    }
-
-    .table-custom th {
-      background-color: var(--navy-primary);
-      color: white;
-      font-weight: 500;
-      white-space: nowrap;
-      padding: 0.9rem 1rem;
-    }
-
-    .table-custom td {
-      padding: 0.85rem 1rem;
-      vertical-align: middle;
-    }
-
     .swal2-popup {
       font-family: 'Prompt', sans-serif !important;
       border-radius: 20px !important;
     }
 
-    /* Responsive Adjustments */
-    @media (max-width: 576px) {
-      .gs-header {
-        padding: 1.5rem 0.75rem 2.75rem 0.75rem;
+    /* Mobile Responsive Adjustments */
+    @media (max-width: 768px) {
+      .topic-box-header {
+        padding: 1.1rem 1rem 1.1rem 1.2rem;
       }
-      .gs-header h2 {
-        font-size: 1.4rem;
+      .cartoon-icon-wrap {
+        width: 48px;
+        height: 48px;
       }
-      .mascot-float {
-        width: 105px;
-        height: 98px;
+      .cartoon-icon-wrap svg {
+        width: 28px;
+        height: 28px;
+      }
+      .btn-submit-work {
+        width: 100%;
+        justify-content: center;
       }
     }
   </style>
@@ -214,13 +259,13 @@
           </div>
           <h2 class="fw-bold mb-1">ระบบส่งผลงานวิชาการออนไลน์</h2>
           <p class="text-light opacity-75 mb-0 small">
-            รองรับไฟล์ PDF ตามเกณฑ์ สรพ. (ขนาดไม่เกิน 500 KB) จัดเรียงหัวข้อตามกำหนดส่งอัตโนมัติ
+            แนบไฟล์ PDF ตามเกณฑ์ สรพ. (ขนาดไม่เกิน 500 KB) จัดเรียงหัวข้อตามกำหนดส่ง และแยกตารางผลงานตามหัวข้ออัตโนมัติ
           </p>
         </div>
 
         <!-- มาสคอตการ์ตูนวิชาการ -->
         <div class="col-md-4 text-center text-md-end">
-          <svg class="mascot-float" width="130" height="120" viewBox="0 0 200 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="mascot-float" width="120" height="110" viewBox="0 0 200 180" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="100" cy="95" r="72" fill="#1E4273" stroke="#F59E0B" stroke-width="3" stroke-dasharray="6 6"/>
             <path d="M100 18L45 42L100 66L155 42L100 18Z" fill="#F59E0B"/>
             <path d="M68 53V72C68 72 82 82 100 82C118 82 132 72 132 72V53" fill="#D97706"/>
@@ -249,79 +294,33 @@
     </div>
   </header>
 
-  <!-- Main Container (Full Width Responsive) -->
+  <!-- Main Container (Full Width 100%) -->
   <main class="container-fluid px-3 px-lg-5 pb-5 flex-grow-1">
     
-    <!-- แถบควบคุม -->
+    <!-- แถบสถานะรวม -->
     <div class="control-bar p-3 px-4 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-2">
       <div class="d-flex flex-wrap align-items-center gap-2">
-        <i class="bi bi-calendar-check-fill text-primary fs-5"></i>
-        <span class="fw-semibold text-dark">หัวข้อเปิดรับผลงาน</span>
+        <i class="bi bi-layers-fill text-primary fs-5"></i>
+        <span class="fw-semibold text-dark">รายการหัวข้อและตารางผลงาน</span>
         <span class="badge bg-primary-subtle text-primary rounded-pill">เรียงตามกำหนดส่งใกล้สุด</span>
         <span class="badge bg-warning-subtle text-dark border border-warning-subtle rounded-pill">
-          <i class="bi bi-file-earmark-check me-1"></i>เกณฑ์ สรพ. PDF ≤ 500 KB
+          <i class="bi bi-file-earmark-pdf-fill text-danger me-1"></i>เกณฑ์ สรพ. PDF ≤ 500 KB
         </span>
       </div>
       <div>
-        <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="loadTopics()">
-          <i class="bi bi-arrow-clockwise me-1"></i> รีเฟรชข้อมูล
+        <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="loadAllData()">
+          <i class="bi bi-arrow-clockwise me-1"></i> รีเฟรชทั้งหมด
         </button>
       </div>
     </div>
 
-    <!-- รายการการ์ดหัวข้อ -->
-    <div id="topicsContainer" class="row g-3 g-lg-4 mb-5">
-      <div class="col-12 text-center py-5">
+    <!-- พื้นที่แสดงกล่องหัวข้อ + ตารางแยกตามแต่ละงาน (เต็มจอ) -->
+    <div id="sectionsContainer">
+      <div class="bg-white rounded-4 shadow-sm text-center py-5">
         <div class="spinner-border text-primary" role="status"></div>
-        <p class="mt-2 text-muted small">กำลังโหลดผลงาน...</p>
+        <p class="mt-2 text-muted small mb-0">กำลังโหลดผลงาน...</p>
       </div>
     </div>
-
-    <!-- ========================================================= -->
-    <!-- ตารางแสดงรายชื่อผลงานแบบเต็มหน้าจอ (อัปเดตทันทีเมื่ออัปโหลด) -->
-    <!-- ========================================================= -->
-    <section id="fullTableSection" class="full-table-card mt-4 d-none">
-      <div class="p-3 p-md-4 text-white d-flex flex-wrap justify-content-between align-items-center gap-3" style="background: var(--navy-primary);">
-        <div>
-          <h5 class="fw-bold mb-1">
-            <i class="bi bi-table me-2 text-warning"></i>ตารางรายชื่อผลงานที่ส่งแล้ว
-          </h5>
-          <div class="small text-warning" id="tableTopicTitle">หัวข้อ: -</div>
-        </div>
-        <div class="d-flex flex-wrap align-items-center gap-2">
-          <div class="input-group input-group-sm" style="min-width: 240px;">
-            <span class="input-group-text bg-white border-0"><i class="bi bi-search text-muted"></i></span>
-            <input type="text" id="tableSearchInput" class="form-control border-0" placeholder="ค้นหาชื่อเรื่อง / หน่วยงาน / ผู้ส่ง..." onkeyup="filterTable()">
-          </div>
-          <span class="badge bg-success px-3 py-2 rounded-pill" id="tableTotalBadge">ทั้งหมด 0 เรื่อง</span>
-        </div>
-      </div>
-
-      <div class="p-3 p-md-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="small text-muted"><i class="bi bi-sort-down text-primary me-1"></i>เรียงลำดับจาก <strong>ผู้ส่งล่าสุดอยู่แถวบนสุด</strong></span>
-          <button class="btn btn-sm btn-outline-primary rounded-pill" onclick="refreshCurrentTable()">
-            <i class="bi bi-arrow-repeat me-1"></i>อัปเดตตาราง
-          </button>
-        </div>
-
-        <div class="table-responsive">
-          <table class="table table-hover align-middle table-custom border mb-0">
-            <thead>
-              <tr>
-                <th class="text-center" style="width: 80px;">ลำดับ</th>
-                <th style="width: 170px;">วัน-เวลาที่ส่ง</th>
-                <th>ชื่อเรื่องผลงานวิชาการ</th>
-                <th style="width: 200px;">หน่วยงาน</th>
-                <th style="width: 200px;">ผู้ส่งผลงาน</th>
-                <th class="text-center" style="width: 130px;">ไฟล์แนบ</th>
-              </tr>
-            </thead>
-            <tbody id="fullTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
 
   </main>
 
@@ -358,6 +357,7 @@
         <form id="submissionForm" onsubmit="handleSubmission(event)">
           <div class="modal-body p-4">
             <input type="hidden" id="selectedTopicTitle">
+            <input type="hidden" id="selectedTopicIndex">
 
             <div class="mb-3">
               <label class="form-label fw-semibold">ชื่อเรื่องผลงานวิชาการ <span class="text-danger">*</span></label>
@@ -377,7 +377,7 @@
 
             <div class="mb-2">
               <label class="form-label fw-semibold">
-                แนบไฟล์ผลงาน PDF <span class="badge bg-danger-subtle text-danger ms-1">จำกัดขนาดไม่เกิน 500 KB ตามเกณฑ์ สรพ.</span> <span class="text-danger">*</span>
+                แนบไฟล์ผลงาน PDF <span class="badge bg-danger-subtle text-danger ms-1">ขนาดไม่เกิน 500 KB ตามเกณฑ์ สรพ.</span> <span class="text-danger">*</span>
               </label>
               <div class="pdf-dropzone" id="dropzone" onclick="document.getElementById('pdfFile').click()">
                 <input type="file" id="pdfFile" accept="application/pdf" class="d-none" onchange="handleFileSelect(this)" required>
@@ -394,7 +394,7 @@
 
           <div class="modal-footer bg-light rounded-bottom-4">
             <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">ยกเลิก</button>
-            <button type="submit" class="btn btn-navy px-4">
+            <button type="submit" class="btn btn-submit-work">
               <i class="bi bi-cloud-arrow-up-fill me-1"></i> ยืนยันการส่งผลงาน
             </button>
           </div>
@@ -451,7 +451,7 @@
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytkpArUVs8VV4-CHcMjx2jsNMMfk6OXi7uzVGOiGcBLb8SAllO08hARmcazr_MQuRIDg/exec';
-    const MAX_FILE_SIZE_KB = 500; // จำกัดขนาดไฟล์ 500 KB ตามข้อกำหนด สรพ.
+    const MAX_FILE_SIZE_KB = 500;
 
     const CARTOON_ICONS = [
       `<svg width="36" height="36" viewBox="0 0 64 64" fill="none">
@@ -485,14 +485,13 @@
     ];
 
     let submitModalObj, adminModalObj;
-    let currentActiveTopic = '';
-    let currentSubmissionsData = [];
+    let topicSubmissionsCache = {}; // เก็บข้อมูลแต่ละหัวข้อแยกกันไว้สำหรับค้นหา
 
     document.addEventListener('DOMContentLoaded', () => {
       submitModalObj = new bootstrap.Modal(document.getElementById('submitModal'));
       adminModalObj = new bootstrap.Modal(document.getElementById('adminModal'));
       
-      loadTopics();
+      loadAllData();
 
       // ทางเข้าลับแอดมินผ่าน ?admin=1
       const urlParams = new URLSearchParams(window.location.search);
@@ -501,13 +500,13 @@
       }
     });
 
-    // ดึงรายการหัวข้อ (ใช้ GET เพื่อความเร็วสูงสุด)
-    async function loadTopics(keepTopic = null) {
-      const container = document.getElementById('topicsContainer');
+    // โหลดหัวข้อทั้งหมด + ดึงตารางของแต่ละหัวข้อแยกกล่องกัน
+    async function loadAllData() {
+      const container = document.getElementById('sectionsContainer');
       container.innerHTML = `
-        <div class="col-12 text-center py-5">
+        <div class="bg-white rounded-4 shadow-sm text-center py-5">
           <div class="spinner-border text-primary" role="status"></div>
-          <p class="mt-2 text-muted small">กำลังโหลดผลงาน...</p>
+          <p class="mt-2 text-muted small mb-0">กำลังโหลดผลงาน...</p>
         </div>
       `;
 
@@ -515,33 +514,27 @@
         const res = await fetch(`${SCRIPT_URL}?action=getTopics`);
         const data = await res.json();
         if (data.status === 'success') {
-          renderTopics(data.topics);
-          // โหลดตารางหัวข้อแรก หรือหัวข้อที่กำลังดูอยู่ขึ้นมาโชว์เต็มจอทันที
-          if (data.topics.length > 0) {
-            const targetTopic = keepTopic || currentActiveTopic || data.topics[0].title;
-            loadFullTable(targetTopic, false);
-          }
+          renderAllTopicSections(data.topics);
         } else {
           throw new Error(data.message);
         }
       } catch (err) {
         container.innerHTML = `
-          <div class="col-12">
-            <div class="alert alert-danger rounded-4 text-center py-4">
-              <i class="bi bi-exclamation-triangle-fill fs-2 d-block mb-2"></i>
-              <strong>เกิดข้อผิดพลาดในการเชื่อมต่อ</strong><br>
-              <small>${err.message}</small>
-            </div>
+          <div class="alert alert-danger rounded-4 text-center py-4 shadow-sm">
+            <i class="bi bi-exclamation-triangle-fill fs-2 d-block mb-2"></i>
+            <strong>ไม่สามารถเชื่อมต่อข้อมูลได้</strong><br>
+            <small>${err.message}</small>
           </div>
         `;
       }
     }
 
-    function renderTopics(topics) {
-      const container = document.getElementById('topicsContainer');
+    // สร้างกล่องเต็มจอแยกตามแต่ละหัวข้อ (รวมหัวข้อ + กำหนดส่ง + ตารางไว้ในกล่องเดียวกัน)
+    function renderAllTopicSections(topics) {
+      const container = document.getElementById('sectionsContainer');
       if (!topics || topics.length === 0) {
         container.innerHTML = `
-          <div class="col-12 text-center py-5 bg-white rounded-4 shadow-sm">
+          <div class="bg-white rounded-4 shadow-sm text-center py-5">
             <i class="bi bi-folder2-open text-muted" style="font-size: 3rem;"></i>
             <h5 class="mt-3 text-secondary">ยังไม่มีหัวข้อเปิดรับผลงานในขณะนี้</h5>
           </div>
@@ -557,68 +550,175 @@
         const diffDays = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
         const thaiDate = formatThaiDate(topic.deadline);
         const cartoonSvg = CARTOON_ICONS[index % CARTOON_ICONS.length];
+        const safeTitle = escapeHtml(topic.title);
 
         let statusBadge = '';
-        let cardClass = '';
+        let boxClass = '';
         let isClosed = false;
 
         if (diffDays < 0) {
-          statusBadge = `<span class="badge bg-secondary rounded-pill"><i class="bi bi-lock-fill me-1"></i>ปิดรับแล้ว</span>`;
-          cardClass = 'expired';
+          statusBadge = `<span class="badge bg-secondary rounded-pill px-3 py-1"><i class="bi bi-lock-fill me-1"></i>ปิดรับแล้ว</span>`;
+          boxClass = 'expired';
           isClosed = true;
         } else if (diffDays <= 3) {
-          statusBadge = `<span class="badge bg-danger rounded-pill"><i class="bi bi-alarm-fill me-1"></i>เหลือเวลา ${diffDays === 0 ? 'วันนี้วันสุดท้าย!' : diffDays + ' วัน'}</span>`;
-          cardClass = 'urgent';
+          statusBadge = `<span class="badge bg-danger rounded-pill px-3 py-1"><i class="bi bi-alarm-fill me-1"></i>เหลือเวลา ${diffDays === 0 ? 'วันนี้วันสุดท้าย!' : diffDays + ' วัน'}</span>`;
+          boxClass = 'urgent';
         } else {
-          statusBadge = `<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill"><i class="bi bi-check-circle-fill me-1"></i>เปิดรับ (อีก ${diffDays} วัน)</span>`;
+          statusBadge = `<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1"><i class="bi bi-check-circle-fill me-1"></i>เปิดรับ (อีก ${diffDays} วัน)</span>`;
         }
 
-        const safeTitle = escapeHtml(topic.title);
-
         return `
-          <div class="col-12 col-md-6 col-xl-4">
-            <div class="topic-card ${cardClass} d-flex flex-column" data-topic="${safeTitle}">
-              <div class="card-top-bar"></div>
-              <div class="p-4 flex-grow-1 d-flex flex-column">
-                <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
-                  ${statusBadge}
-                  <span class="badge bg-light text-dark border rounded-pill">
-                    <i class="bi bi-file-earmark-pdf-fill text-danger me-1"></i>ส่งแล้ว ${topic.count} เรื่อง
-                  </span>
-                </div>
-
-                <div class="d-flex align-items-start gap-3 mb-3">
-                  <div class="cartoon-badge-box">${cartoonSvg}</div>
-                  <div>
-                    <h6 class="fw-bold text-dark mb-1" style="line-height: 1.4;">${safeTitle}</h6>
-                    <div class="text-danger small fw-semibold">
-                      <i class="bi bi-calendar-event me-1"></i>กำหนดส่ง: ${thaiDate}
+          <section class="topic-section-box ${boxClass}" id="topic-box-${index}">
+            <!-- ส่วนหัวของกล่อง: ชื่อหัวข้อ + กำหนดส่ง + ปุ่มส่งผลงาน -->
+            <div class="topic-box-header">
+              <div class="topic-box-accent"></div>
+              <div class="row align-items-center g-3">
+                <div class="col-12 col-lg-7">
+                  <div class="d-flex align-items-start gap-3">
+                    <div class="cartoon-icon-wrap">${cartoonSvg}</div>
+                    <div>
+                      <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                        ${statusBadge}
+                        <span class="deadline-pill">
+                          <i class="bi bi-calendar-event-fill"></i> กำหนดส่ง: ${thaiDate}
+                        </span>
+                        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1" id="count-badge-${index}">
+                          ส่งแล้ว ${topic.count} เรื่อง
+                        </span>
+                      </div>
+                      <h4 class="fw-bold text-dark mb-1 mt-1">${safeTitle}</h4>
+                      ${topic.description ? `<p class="text-muted small mb-0">${escapeHtml(topic.description)}</p>` : ''}
                     </div>
                   </div>
                 </div>
 
-                <p class="text-muted small flex-grow-1 mb-4">
-                  ${topic.description ? escapeHtml(topic.description) : 'ส่งไฟล์ผลงานฉบับสมบูรณ์ในรูปแบบไฟล์ PDF (ขนาดไม่เกิน 500 KB)'}
-                </p>
-
-                <div class="d-grid gap-2">
-                  <button class="btn btn-navy py-2" onclick="openSubmitModal('${safeTitle}')" ${isClosed ? 'disabled' : ''}>
-                    <i class="bi bi-send-fill me-1"></i> ${isClosed ? 'สิ้นสุดระยะเวลาส่งผลงาน' : 'ส่งผลงานหัวข้อนี้'}
-                  </button>
-                  <button class="btn btn-outline-primary btn-sm rounded-3" onclick="loadFullTable('${safeTitle}', true)">
-                    <i class="bi bi-table me-1"></i> ดูตารางรายชื่อผู้ส่ง (${topic.count})
-                  </button>
+                <!-- ส่วนค้นหาเฉพาะหัวข้อนี้ + ปุ่มส่งผลงาน -->
+                <div class="col-12 col-lg-5">
+                  <div class="d-flex flex-column flex-sm-row justify-content-lg-end align-items-stretch align-items-sm-center gap-2">
+                    <div class="input-group" style="max-width: 260px;">
+                      <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                      <input type="text" class="form-control border-start-0 bg-light" placeholder="ค้นหาในหัวข้อนี้..." onkeyup="filterTopicTable(${index}, this.value)">
+                    </div>
+                    <button class="btn btn-submit-work d-inline-flex align-items-center gap-2" onclick="openSubmitModal('${safeTitle}', ${index})" ${isClosed ? 'disabled' : ''}>
+                      <i class="bi bi-cloud-arrow-up-fill fs-5"></i>
+                      <span>${isClosed ? 'ปิดรับผลงานแล้ว' : 'ส่งผลงานหัวข้อนี้'}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+
+            <!-- ส่วนตารางผลงานของหัวข้อนี้โดยเฉพาะ (เต็มจอ 100%) -->
+            <div class="table-responsive">
+              <table class="table topic-table align-middle">
+                <thead>
+                  <tr>
+                    <th class="text-center" style="width: 85px;">ลำดับ</th>
+                    <th style="width: 175px;">วัน-เวลาที่ส่ง</th>
+                    <th>ชื่อเรื่องผลงานวิชาการ</th>
+                    <th style="width: 210px;">หน่วยงาน</th>
+                    <th style="width: 210px;">ผู้ส่งผลงาน</th>
+                    <th class="text-center" style="width: 135px;">ไฟล์แนบ</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-topic-${index}">
+                  <tr>
+                    <td colspan="6" class="text-center py-4 text-muted small">
+                      <div class="spinner-border spinner-border-sm text-primary me-2"></div>กำลังโหลดผลงาน...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
         `;
       }).join('');
+
+      // โหลดรายการผลงานเข้าตารางของแต่ละกล่องแบบขนาน (Parallel) เพื่อความเร็วสูงสุด
+      topics.forEach((topic, index) => {
+        fetchTopicSubmissions(topic.title, index);
+      });
     }
 
-    function openSubmitModal(topicTitle) {
+    // ดึงข้อมูลผลงานของแต่ละหัวข้อมาใส่ในตารางของกล่องนั้นๆ
+    async function fetchTopicSubmissions(topicTitle, index) {
+      const tbody = document.getElementById(`tbody-topic-${index}`);
+      if (!tbody) return;
+
+      try {
+        const res = await fetch(`${SCRIPT_URL}?action=getSubmissions&topicTitle=${encodeURIComponent(topicTitle)}`);
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          const list = data.submissions || [];
+          topicSubmissionsCache[index] = list;
+          
+          const countBadge = document.getElementById(`count-badge-${index}`);
+          if (countBadge) countBadge.textContent = `ส่งแล้ว ${list.length} เรื่อง`;
+
+          renderTopicTableRows(index, list);
+        } else {
+          throw new Error(data.message);
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-3 small">เกิดข้อผิดพลาดในการโหลดตาราง: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderTopicTableRows(index, list) {
+      const tbody = document.getElementById(`tbody-topic-${index}`);
+      if (!tbody) return;
+
+      if (!list || list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center py-4 text-muted small">
+              <i class="bi bi-inbox fs-4 d-block mb-1 opacity-50"></i>
+              ยังไม่มีผู้ส่งผลงานในหัวข้อนี้ (เป็นคนแรกที่ส่งผลงานได้เลย!)
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = list.map((item, idx) => `
+        <tr class="${idx === 0 ? 'table-success bg-opacity-10' : ''}">
+          <td class="text-center fw-bold">
+            ${idx === 0 ? '<span class="badge bg-success rounded-pill">ล่าสุด</span>' : idx + 1}
+          </td>
+          <td class="small text-muted">${escapeHtml(item.timestamp)}</td>
+          <td class="fw-semibold text-dark">${escapeHtml(item.workTitle)}</td>
+          <td><span class="badge bg-primary-subtle text-primary">${escapeHtml(item.department)}</span></td>
+          <td>${escapeHtml(item.author)}</td>
+          <td class="text-center">
+            <a href="${item.fileUrl}" target="_blank" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+              <i class="bi bi-file-earmark-pdf-fill me-1"></i>เปิด PDF
+            </a>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ค้นหาเฉพาะในตารางของหัวข้อนั้นๆ
+    function filterTopicTable(index, keyword) {
+      const allRows = topicSubmissionsCache[index] || [];
+      const q = keyword.toLowerCase().trim();
+      if (!q) {
+        renderTopicTableRows(index, allRows);
+        return;
+      }
+      const filtered = allRows.filter(item =>
+        (item.workTitle && item.workTitle.toLowerCase().includes(q)) ||
+        (item.department && item.department.toLowerCase().includes(q)) ||
+        (item.author && item.author.toLowerCase().includes(q))
+      );
+      renderTopicTableRows(index, filtered);
+    }
+
+    function openSubmitModal(topicTitle, index) {
       document.getElementById('submissionForm').reset();
       document.getElementById('selectedTopicTitle').value = topicTitle;
+      document.getElementById('selectedTopicIndex').value = index;
       document.getElementById('modalTopicSubtitle').textContent = 'หัวข้อ: ' + topicTitle;
       document.getElementById('fileLabel').innerHTML = 'คลิกเพื่อเลือกไฟล์ PDF (ขนาดไม่เกิน 500 KB)';
       document.getElementById('dropzone').classList.remove('has-file');
@@ -676,6 +776,8 @@
       try {
         const base64Data = await fileToBase64(file);
         const topicTitle = document.getElementById('selectedTopicTitle').value;
+        const topicIndex = document.getElementById('selectedTopicIndex').value;
+
         const payload = {
           action: 'submitWork',
           topicTitle: topicTitle,
@@ -706,99 +808,18 @@
                 <div class="mt-2"><a href="${result.fileUrl}" target="_blank" class="btn btn-sm btn-outline-danger"><i class="bi bi-file-pdf"></i> เปิดดูไฟล์ PDF</a></div>
               </div>
             `,
-            confirmButtonText: 'ดูตารางรายชื่อผู้ส่ง',
+            confirmButtonText: 'ตกลง',
             confirmButtonColor: '#0f294a'
           });
-          // อัปเดตการ์ดและเลื่อนลงไปโชว์ตารางเต็มจอทันที
-          await loadTopics(topicTitle);
-          loadFullTable(topicTitle, true);
+          // อัปเดตตารางเฉพาะของหัวข้อนั้นทันทีและเลื่อนไปที่กล่องนั้น
+          await fetchTopicSubmissions(topicTitle, topicIndex);
+          const targetBox = document.getElementById(`topic-box-${topicIndex}`);
+          if (targetBox) targetBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
           throw new Error(result.message);
         }
       } catch (err) {
         Swal.fire('เกิดข้อผิดพลาด', err.message, 'error');
-      }
-    }
-
-    // โหลดและแสดงตารางเต็มหน้าจอ
-    async function loadFullTable(topicTitle, scrollToTable = true) {
-      currentActiveTopic = topicTitle;
-      const section = document.getElementById('fullTableSection');
-      const tbody = document.getElementById('fullTableBody');
-      
-      // ไฮไลต์การ์ดหัวข้อที่กำลังเปิดดู
-      document.querySelectorAll('.topic-card').forEach(card => {
-        card.classList.toggle('active-topic', card.getAttribute('data-topic') === topicTitle);
-      });
-
-      section.classList.remove('d-none');
-      document.getElementById('tableTopicTitle').textContent = 'หัวข้อ: ' + topicTitle;
-      document.getElementById('tableSearchInput').value = '';
-      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4"><div class="spinner-border spinner-border-sm text-primary"></div> กำลังโหลดผลงาน...</td></tr>`;
-
-      if (scrollToTable) {
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-
-      try {
-        const res = await fetch(`${SCRIPT_URL}?action=getSubmissions&topicTitle=${encodeURIComponent(topicTitle)}`);
-        const data = await res.json();
-
-        if (data.status === 'success') {
-          currentSubmissionsData = data.submissions || [];
-          renderTableRows(currentSubmissionsData);
-        } else {
-          throw new Error(data.message);
-        }
-      } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">เกิดข้อผิดพลาด: ${err.message}</td></tr>`;
-      }
-    }
-
-    function renderTableRows(list) {
-      const tbody = document.getElementById('fullTableBody');
-      document.getElementById('tableTotalBadge').textContent = `ทั้งหมด ${list.length} เรื่อง`;
-
-      if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">ยังไม่มีผู้ส่งผลงานในหัวข้อนี้</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = list.map((item, idx) => `
-        <tr class="${idx === 0 ? 'table-success bg-opacity-10' : ''}">
-          <td class="text-center fw-bold">
-            ${idx === 0 ? '<span class="badge bg-success rounded-pill">ล่าสุด</span>' : idx + 1}
-          </td>
-          <td class="small text-muted">${escapeHtml(item.timestamp)}</td>
-          <td class="fw-semibold text-dark">${escapeHtml(item.workTitle)}</td>
-          <td><span class="badge bg-primary-subtle text-primary">${escapeHtml(item.department)}</span></td>
-          <td>${escapeHtml(item.author)}</td>
-          <td class="text-center">
-            <a href="${item.fileUrl}" target="_blank" class="btn btn-sm btn-outline-danger rounded-pill px-3">
-              <i class="bi bi-file-earmark-pdf-fill me-1"></i>เปิด PDF
-            </a>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function filterTable() {
-      const keyword = document.getElementById('tableSearchInput').value.toLowerCase().trim();
-      if (!keyword) {
-        renderTableRows(currentSubmissionsData);
-        return;
-      }
-      const filtered = currentSubmissionsData.filter(item =>
-        (item.workTitle && item.workTitle.toLowerCase().includes(keyword)) ||
-        (item.department && item.department.toLowerCase().includes(keyword)) ||
-        (item.author && item.author.toLowerCase().includes(keyword))
-      );
-      renderTableRows(filtered);
-    }
-
-    function refreshCurrentTable() {
-      if (currentActiveTopic) {
-        loadFullTable(currentActiveTopic, false);
       }
     }
 
@@ -830,7 +851,7 @@
         if (result.status === 'success') {
           adminModalObj.hide();
           await Swal.fire({ icon: 'success', title: 'เพิ่มหัวข้อสำเร็จ!', confirmButtonColor: '#0f294a' });
-          loadTopics(payload.title);
+          loadAllData();
         } else {
           Swal.fire('ไม่สามารถเพิ่มหัวข้อได้', result.message, 'error');
         }
