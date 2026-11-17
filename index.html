@@ -13,6 +13,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
+  <!-- PDF.js & jsPDF สำหรับบีบอัดไฟล์ PDF อัตโนมัติ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
     :root {
       --navy-primary: #0f294a;
@@ -212,7 +216,7 @@
 </head>
 <body>
 
-  <!-- Header Banner -->
+  <!-- Header Banner (สะอาดตา ไม่รก) -->
   <header class="gs-header">
     <div class="container-fluid px-3 px-lg-5">
       <div class="row align-items-center g-3">
@@ -342,7 +346,7 @@
                   <rect x="19" y="30" width="26" height="14" rx="3" fill="#EF4444"/>
                   <text x="32" y="40" fill="white" font-size="9" font-weight="bold" text-anchor="middle" font-family="sans-serif">PDF</text>
                 </svg>
-                <div id="fileLabel" class="fw-medium text-dark small">คลิกเพื่อเลือกไฟล์ PDF (ขนาดไม่เกิน 15 MB)</div>
+                <div id="fileLabel" class="fw-medium text-dark small">คลิกเพื่อเลือกไฟล์ PDF (ระบบปรับขนาดให้น้อยกว่า 500 KB อัตโนมัติ)</div>
               </div>
             </div>
           </div>
@@ -403,8 +407,10 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytkpArUVs8VV4-CHcMjx2jsNMMfk6OXi7uzVGOiGcBLb8SAllO08hARmcazr_MQuRIDg/exec';
-    const MAX_FILE_SIZE_MB = 15; // จำกัดขนาดสูงสุด 15 MB เพื่อป้องกันเบราว์เซอร์ค้างขณะแปลงไฟล์
+    const TARGET_MAX_BYTES = 490 * 1024; // ตั้งเป้าให้น้อยกว่า 500 KB อัตโนมัติ
 
     const CARTOON_ICONS = [
       `<svg width="36" height="36" viewBox="0 0 64 64" fill="none">
@@ -673,12 +679,12 @@
       document.getElementById('selectedTopicTitle').value = topicTitle;
       document.getElementById('selectedTopicIndex').value = index;
       document.getElementById('modalTopicSubtitle').textContent = 'หัวข้อ: ' + topicTitle;
-      document.getElementById('fileLabel').innerHTML = 'คลิกเพื่อเลือกไฟล์ PDF (ขนาดไม่เกิน 15 MB)';
+      document.getElementById('fileLabel').innerHTML = 'คลิกเพื่อเลือกไฟล์ PDF (ระบบปรับขนาดให้น้อยกว่า 500 KB อัตโนมัติ)';
       document.getElementById('dropzone').classList.remove('has-file');
       submitModalObj.show();
     }
 
-    // ตรวจสอบไฟล์ PDF และแปลงเป็น Base64 โดยตรง (ไม่บีบอัด)
+    // ตรวจสอบและบีบอัดไฟล์ PDF อัตโนมัติให้น้อยกว่า 500 KB
     async function handleFileSelect(input) {
       const file = input.files[0];
       const dropzone = document.getElementById('dropzone');
@@ -697,26 +703,125 @@
         return;
       }
 
-      if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      const origKB = (file.size / 1024).toFixed(1);
+      readyFileName = file.name;
+
+      // หากไฟล์เล็กกว่า 500 KB อยู่แล้ว ใช้ต้นฉบับได้เลย
+      if (file.size <= TARGET_MAX_BYTES) {
+        readyPdfBase64 = await fileToBase64(file);
+        dropzone.classList.add('has-file');
+        label.innerHTML = `
+          <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i>${escapeHtml(file.name)}</span>
+          <div class="small text-muted mt-1">ขนาดไฟล์: <strong>${origKB} KB</strong></div>
+        `;
+        return;
+      }
+
+      // หากไฟล์เกิน 500 KB -> บีบอัดอัตโนมัติ
+      Swal.fire({
+        title: 'กำลังบีบอัดไฟล์ PDF อัตโนมัติ...',
+        html: `ขนาดไฟล์เดิม <strong>${(file.size / 1024 / 1024).toFixed(2)} MB</strong> กำลังปรับขนาดให้น้อยกว่า 500 KB...`,
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
+
+      try {
+        const compressedResult = await compressPdfUnder500KB(file);
+        Swal.close();
+
+        readyPdfBase64 = compressedResult.base64;
+        const newKB = (compressedResult.byteLength / 1024).toFixed(1);
+
+        dropzone.classList.add('has-file');
+        label.innerHTML = `
+          <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i>${escapeHtml(file.name)}</span>
+          <div class="small text-primary mt-1">
+            <i class="bi bi-magic me-1"></i>ปรับขนาดอัตโนมัติสำเร็จ: <del class="text-muted">${origKB} KB</del> &rarr; <strong>${newKB} KB</strong>
+          </div>
+        `;
+      } catch (err) {
         Swal.fire({
-          icon: 'warning',
-          title: 'ไฟล์มีขนาดใหญ่เกินไป',
-          text: `กรุณาเลือกไฟล์ PDF ขนาดไม่เกิน ${MAX_FILE_SIZE_MB} MB ครับ`,
+          icon: 'error',
+          title: 'ไม่สามารถบีบอัดไฟล์ได้',
+          text: err.message,
           confirmButtonColor: '#0f294a'
         });
         input.value = '';
         readyPdfBase64 = null;
-        return;
+        dropzone.classList.remove('has-file');
+      }
+    }
+
+    async function compressPdfUnder500KB(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const numPages = pdfDoc.numPages;
+      const { jsPDF } = window.jspdf;
+
+      const presets = [
+        { scale: 1.3, quality: 0.65 },
+        { scale: 1.1, quality: 0.55 },
+        { scale: 0.95, quality: 0.45 },
+        { scale: 0.85, quality: 0.38 },
+        { scale: 0.75, quality: 0.30 },
+        { scale: 0.65, quality: 0.25 }
+      ];
+
+      let bestBase64 = null;
+      let bestBytes = Infinity;
+
+      for (const preset of presets) {
+        let outPdf = null;
+
+        for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+          const page = await pdfDoc.getPage(pageNum);
+          const viewport = page.getViewport({ scale: preset.scale });
+
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+          const imgData = canvas.toDataURL('image/jpeg', preset.quality);
+
+          const orientation = viewport.width > viewport.height ? 'l' : 'p';
+          const pageWidthMm = viewport.width * 0.264583;
+          const pageHeightMm = viewport.height * 0.264583;
+
+          if (pageNum === 1) {
+            outPdf = new jsPDF({
+              orientation: orientation,
+              unit: 'mm',
+              format: [pageWidthMm, pageHeightMm],
+              compress: true
+            });
+          } else {
+            outPdf.addPage([pageWidthMm, pageHeightMm], orientation);
+          }
+
+          outPdf.addImage(imgData, 'JPEG', 0, 0, pageWidthMm, pageHeightMm, undefined, 'FAST');
+        }
+
+        const dataUri = outPdf.output('datauristring');
+        const base64Str = dataUri.split(',')[1];
+        const byteLen = Math.ceil((base64Str.length * 3) / 4);
+
+        if (byteLen < bestBytes) {
+          bestBytes = byteLen;
+          bestBase64 = base64Str;
+        }
+
+        if (byteLen <= TARGET_MAX_BYTES) {
+          return { base64: base64Str, byteLength: byteLen };
+        }
       }
 
-      readyFileName = file.name;
-      readyPdfBase64 = await fileToBase64(file);
-      const sizeText = file.size >= 1024 * 1024
-        ? `${(file.size / 1024 / 1024).toFixed(2)} MB`
-        : `${(file.size / 1024).toFixed(1)} KB`;
+      if (bestBytes <= 500 * 1024) {
+        return { base64: bestBase64, byteLength: bestBytes };
+      }
 
-      dropzone.classList.add('has-file');
-      label.innerHTML = `<span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i>${escapeHtml(file.name)}</span> (${sizeText})`;
+      throw new Error(`ขนาดเล็กสุดที่ทำได้คือ ${(bestBytes / 1024).toFixed(0)} KB ซึ่งยังเกิน 500 KB`);
     }
 
     async function handleSubmission(e) {
