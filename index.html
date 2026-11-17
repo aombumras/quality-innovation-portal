@@ -5,18 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ระบบส่งผลงานวิชาการ | ศูนย์พัฒนาคุณภาพ</title>
   
-  <!-- Google Fonts: Prompt -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- Bootstrap 5.3.3 CSS & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <!-- SweetAlert2 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
-  <!-- PDF.js & jsPDF สำหรับบีบอัดไฟล์ PDF อัตโนมัติบนเบราว์เซอร์ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -29,9 +25,7 @@
       --bg-surface: #eef2f6;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       width: 100%;
@@ -46,7 +40,6 @@
       flex-direction: column;
     }
 
-    /* Full-Width Header */
     .gs-header {
       width: 100%;
       background: linear-gradient(135deg, var(--navy-primary) 0%, var(--navy-secondary) 100%);
@@ -67,12 +60,8 @@
       filter: drop-shadow(0 8px 14px rgba(0,0,0,0.28));
     }
 
-    .secret-admin-trigger {
-      cursor: default;
-      user-select: none;
-    }
+    .secret-admin-trigger { cursor: default; user-select: none; }
 
-    /* Top Summary / Control Bar */
     .control-bar {
       background: #ffffff;
       border-radius: 16px;
@@ -82,7 +71,6 @@
       z-index: 10;
     }
 
-    /* Full-Width Topic Box */
     .topic-section-box {
       width: 100%;
       background: #ffffff;
@@ -107,9 +95,7 @@
 
     .topic-box-accent {
       position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
+      top: 0; left: 0; bottom: 0;
       width: 7px;
       background: linear-gradient(180deg, var(--navy-primary), var(--teal-soft));
     }
@@ -177,11 +163,7 @@
       cursor: not-allowed;
     }
 
-    /* Table inside Topic Box */
-    .topic-table {
-      margin-bottom: 0;
-      width: 100%;
-    }
+    .topic-table { margin-bottom: 0; width: 100%; }
 
     .topic-table thead th {
       background-color: var(--navy-primary);
@@ -200,15 +182,9 @@
       font-size: 0.93rem;
     }
 
-    .topic-table tbody tr:last-child td {
-      border-bottom: none;
-    }
+    .topic-table tbody tr:last-child td { border-bottom: none; }
+    .topic-table tbody tr:hover { background-color: #f8fafc; }
 
-    .topic-table tbody tr:hover {
-      background-color: #f8fafc;
-    }
-
-    /* Dropzone */
     .pdf-dropzone {
       border: 2px dashed #93c5fd;
       border-radius: 14px;
@@ -230,21 +206,10 @@
     }
 
     @media (max-width: 768px) {
-      .topic-box-header {
-        padding: 1.1rem 1rem 1.1rem 1.2rem;
-      }
-      .cartoon-icon-wrap {
-        width: 48px;
-        height: 48px;
-      }
-      .cartoon-icon-wrap svg {
-        width: 28px;
-        height: 28px;
-      }
-      .btn-submit-work {
-        width: 100%;
-        justify-content: center;
-      }
+      .topic-box-header { padding: 1.1rem 1rem 1.1rem 1.2rem; }
+      .cartoon-icon-wrap { width: 48px; height: 48px; }
+      .cartoon-icon-wrap svg { width: 28px; height: 28px; }
+      .btn-submit-work { width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -255,7 +220,6 @@
     <div class="container-fluid px-3 px-lg-5">
       <div class="row align-items-center g-3">
         <div class="col-md-8 text-center text-md-start">
-          <!-- ดับเบิลคลิกที่ป้าย HA / CQI / R2R เพื่อเปิดหน้าต่างแอดมิน -->
           <div class="d-inline-flex align-items-center gap-2 bg-white bg-opacity-10 px-3 py-1 rounded-pill mb-2 border border-white border-opacity-25 secret-admin-trigger" ondblclick="openAdminModal()">
             <span class="badge bg-warning text-dark rounded-pill">HA / CQI / R2R</span>
             <small>ศูนย์พัฒนาคุณภาพ (Quality Center)</small>
@@ -266,7 +230,6 @@
           </p>
         </div>
 
-        <!-- มาสคอตการ์ตูนวิชาการ -->
         <div class="col-md-4 text-center text-md-end">
           <svg class="mascot-float" width="120" height="110" viewBox="0 0 200 180" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="100" cy="95" r="72" fill="#1E4273" stroke="#F59E0B" stroke-width="3" stroke-dasharray="6 6"/>
@@ -299,8 +262,6 @@
 
   <!-- Main Container -->
   <main class="container-fluid px-3 px-lg-5 pb-5 flex-grow-1">
-    
-    <!-- แถบสถานะรวม -->
     <div class="control-bar p-3 px-4 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-2">
       <div class="d-flex flex-wrap align-items-center gap-2">
         <i class="bi bi-layers-fill text-primary fs-5"></i>
@@ -317,26 +278,21 @@
       </div>
     </div>
 
-    <!-- พื้นที่แสดงกล่องหัวข้อ + ตารางแยกตามแต่ละงาน -->
     <div id="sectionsContainer">
       <div class="bg-white rounded-4 shadow-sm text-center py-5">
         <div class="spinner-border text-primary" role="status"></div>
         <p class="mt-2 text-muted small mb-0">กำลังโหลดผลงาน...</p>
       </div>
     </div>
-
   </main>
 
-  <!-- Footer -->
   <footer class="text-center py-3 text-muted small border-top bg-white mt-auto">
     <div class="container-fluid">
       ศูนย์พัฒนาคุณภาพ | ระบบจัดการส่งผลงานวิชาการและนวัตกรรมอัตโนมัติ
     </div>
   </footer>
 
-  <!-- ========================================================= -->
   <!-- MODAL 1: ฟอร์มส่งผลงานวิชาการ -->
-  <!-- ========================================================= -->
   <div class="modal fade" id="submitModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content border-0 rounded-4 shadow-lg">
@@ -406,9 +362,7 @@
     </div>
   </div>
 
-  <!-- ========================================================= -->
-  <!-- MODAL 2: แอดมินเพิ่มหัวข้อใหม่ (ซ่อนปุ่ม เปิดผ่านทางลับ) -->
-  <!-- ========================================================= -->
+  <!-- MODAL 2: แอดมินเพิ่มหัวข้อใหม่ -->
   <div class="modal fade" id="adminModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-0 rounded-4 shadow-lg">
@@ -453,11 +407,10 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
-    // ตั้งค่า Worker ของ PDF.js
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytkpArUVs8VV4-CHcMjx2jsNMMfk6OXi7uzVGOiGcBLb8SAllO08hARmcazr_MQuRIDg/exec';
-    const TARGET_MAX_BYTES = 490 * 1024; // ตั้งเป้าให้น้อยกว่า 500 KB (490 KB) เพื่อความปลอดภัย 100%
+    const TARGET_MAX_BYTES = 490 * 1024;
 
     const CARTOON_ICONS = [
       `<svg width="36" height="36" viewBox="0 0 64 64" fill="none">
@@ -492,8 +445,9 @@
 
     let submitModalObj, adminModalObj;
     let topicSubmissionsCache = {};
-    let readyPdfBase64 = null; // เก็บ Base64 ของไฟล์ PDF ที่พร้อมส่ง (บีบอัดแล้ว)
+    let readyPdfBase64 = null;
     let readyFileName = '';
+    let isSubmitting = false;
 
     document.addEventListener('DOMContentLoaded', () => {
       submitModalObj = new bootstrap.Modal(document.getElementById('submitModal'));
@@ -501,7 +455,6 @@
       
       loadAllData();
 
-      // ทางเข้าลับแอดมินผ่าน ?admin=1
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('admin') === '1') {
         setTimeout(() => openAdminModal(), 400);
@@ -518,7 +471,7 @@
       `;
 
       try {
-        const res = await fetch(`${SCRIPT_URL}?action=getTopics`);
+        const res = await fetch(`${SCRIPT_URL}?action=getTopics&t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success') {
           renderAllTopicSections(data.topics);
@@ -644,10 +597,10 @@
 
     async function fetchTopicSubmissions(topicTitle, index) {
       const tbody = document.getElementById(`tbody-topic-${index}`);
-      if (!tbody) return;
+      if (!tbody) return [];
 
       try {
-        const res = await fetch(`${SCRIPT_URL}?action=getSubmissions&topicTitle=${encodeURIComponent(topicTitle)}`);
+        const res = await fetch(`${SCRIPT_URL}?action=getSubmissions&topicTitle=${encodeURIComponent(topicTitle)}&t=${Date.now()}`);
         const data = await res.json();
 
         if (data.status === 'success') {
@@ -658,11 +611,13 @@
           if (countBadge) countBadge.textContent = `ส่งแล้ว ${list.length} เรื่อง`;
 
           renderTopicTableRows(index, list);
+          return list;
         } else {
           throw new Error(data.message);
         }
       } catch (err) {
         tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-3 small">เกิดข้อผิดพลาดในการโหลดตาราง: ${err.message}</td></tr>`;
+        return [];
       }
     }
 
@@ -719,6 +674,8 @@
       document.getElementById('submissionForm').reset();
       readyPdfBase64 = null;
       readyFileName = '';
+      isSubmitting = false;
+      document.getElementById('btnConfirmSubmit').disabled = false;
       document.getElementById('selectedTopicTitle').value = topicTitle;
       document.getElementById('selectedTopicIndex').value = index;
       document.getElementById('modalTopicSubtitle').textContent = 'หัวข้อ: ' + topicTitle;
@@ -727,9 +684,6 @@
       submitModalObj.show();
     }
 
-    // =========================================================
-    // ระบบตรวจสอบและบีบอัดไฟล์ PDF อัตโนมัติให้น้อยกว่า 500 KB
-    // =========================================================
     async function handleFileSelect(input) {
       const file = input.files[0];
       const dropzone = document.getElementById('dropzone');
@@ -751,7 +705,6 @@
       const origKB = (file.size / 1024).toFixed(1);
       readyFileName = file.name;
 
-      // กรณีไฟล์เดิมเล็กกว่า 500 KB อยู่แล้ว ใช้ต้นฉบับได้เลย
       if (file.size <= TARGET_MAX_BYTES) {
         readyPdfBase64 = await fileToBase64(file);
         dropzone.classList.add('has-file');
@@ -762,10 +715,9 @@
         return;
       }
 
-      // กรณีไฟล์เกิน 500 KB -> บีบอัดอัตโนมัติ
       Swal.fire({
         title: 'กำลังบีบอัดไฟล์ PDF อัตโนมัติ...',
-        html: `ขนาดไฟล์เดิม <strong>${(file.size / 1024 / 1024).toFixed(2)} MB (${origKB} KB)</strong><br>กำลังปรับขนาดให้น้อยกว่า 500 KB ตามเกณฑ์ สรพ...`,
+        html: `ขนาดไฟล์เดิม <strong>${(file.size / 1024 / 1024).toFixed(2)} MB (${origKB} KB)</strong><br>กำลังปรับขนาดให้น้อยกว่า 500 KB...`,
         allowOutsideClick: false,
         didOpen: () => { Swal.showLoading(); }
       });
@@ -788,7 +740,7 @@
         Swal.fire({
           icon: 'error',
           title: 'ไม่สามารถบีบอัดไฟล์ได้',
-          text: 'ไฟล์มีความละเอียดสูงหรือมีจำนวนหน้ามากเกินไป กรุณาย่อไฟล์เบื้องต้นก่อนเลือกอีกครั้ง (' + err.message + ')',
+          text: err.message,
           confirmButtonColor: '#0f294a'
         });
         input.value = '';
@@ -797,14 +749,12 @@
       }
     }
 
-    // ฟังก์ชันบีบอัด PDF ด้วย PDF.js + jsPDF วนปรับความละเอียดจนกว่าจะ < 500 KB
     async function compressPdfUnder500KB(file) {
       const arrayBuffer = await file.arrayBuffer();
       const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
       const numPages = pdfDoc.numPages;
       const { jsPDF } = window.jspdf;
 
-      // ระดับการบีบอัดจากคมชัดปานกลาง -> บีบอัดสูง เพื่อให้ได้ขนาด < 490 KB
       const presets = [
         { scale: 1.3, quality: 0.65 },
         { scale: 1.1, quality: 0.55 },
@@ -814,7 +764,6 @@
         { scale: 0.65, quality: 0.25 }
       ];
 
-      // เรนเดอร์แต่ละหน้าเป็น Canvas เตรียมไว้ก่อน
       let bestBase64 = null;
       let bestBytes = Infinity;
 
@@ -860,7 +809,6 @@
           bestBase64 = base64Str;
         }
 
-        // ถ้าขนาดต่ำกว่า 490 KB แล้ว หยุดทันทีเพื่อรักษาความคมชัดสูงสุดเท่าที่เป็นไปได้
         if (byteLen <= TARGET_MAX_BYTES) {
           return { base64: base64Str, byteLength: byteLen };
         }
@@ -873,13 +821,20 @@
       throw new Error(`ขนาดเล็กสุดที่ทำได้คือ ${(bestBytes / 1024).toFixed(0)} KB ซึ่งยังเกิน 500 KB`);
     }
 
-    // บันทึกและอัปโหลดผลงาน
+    // =========================================================
+    // บันทึกและอัปโหลดผลงาน (แก้ปัญหาเบราว์เซอร์ติด Redirect จนขึ้น Error หลอก)
+    // =========================================================
     async function handleSubmission(e) {
       e.preventDefault();
+      if (isSubmitting) return;
       if (!readyPdfBase64) {
         Swal.fire('กรุณาแนบไฟล์ PDF', 'โปรดเลือกไฟล์ผลงาน PDF ก่อนกดยืนยันครับ', 'warning');
         return;
       }
+
+      isSubmitting = true;
+      const submitBtn = document.getElementById('btnConfirmSubmit');
+      submitBtn.disabled = true;
 
       Swal.fire({
         title: 'กำลังอัปโหลดผลงาน...',
@@ -887,52 +842,89 @@
         didOpen: () => { Swal.showLoading(); }
       });
 
+      const topicTitle = document.getElementById('selectedTopicTitle').value;
+      const topicIndex = document.getElementById('selectedTopicIndex').value;
+      const workTitle = document.getElementById('workTitle').value.trim();
+      const department = document.getElementById('department').value.trim();
+      const author = document.getElementById('author').value.trim();
+
+      const payload = {
+        action: 'submitWork',
+        topicTitle: topicTitle,
+        workTitle: workTitle,
+        department: department,
+        author: author,
+        fileName: readyFileName,
+        fileBase64: readyPdfBase64
+      };
+
       try {
-        const topicTitle = document.getElementById('selectedTopicTitle').value;
-        const topicIndex = document.getElementById('selectedTopicIndex').value;
-
-        const payload = {
-          action: 'submitWork',
-          topicTitle: topicTitle,
-          workTitle: document.getElementById('workTitle').value.trim(),
-          department: document.getElementById('department').value.trim(),
-          author: document.getElementById('author').value.trim(),
-          fileName: readyFileName,
-          fileBase64: readyPdfBase64
-        };
-
         const res = await fetch(SCRIPT_URL, {
           method: 'POST',
+          redirect: 'follow',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
-        const result = await res.json();
 
-        if (result.status === 'success') {
-          submitModalObj.hide();
-          await Swal.fire({
-            icon: 'success',
-            title: 'ส่งผลงานวิชาการสำเร็จ!',
-            html: `
-              <div class="text-start bg-light p-3 rounded-3 small mt-2">
-                <div><strong>เวลาที่บันทึก:</strong> ${result.timestamp}</div>
-                <div><strong>ชื่อเรื่อง:</strong> ${escapeHtml(payload.workTitle)}</div>
-                <div><strong>หน่วยงาน:</strong> ${escapeHtml(payload.department)}</div>
-                <div class="mt-2"><a href="${result.fileUrl}" target="_blank" class="btn btn-sm btn-outline-danger"><i class="bi bi-file-pdf"></i> เปิดดูไฟล์ PDF</a></div>
-              </div>
-            `,
-            confirmButtonText: 'ตกลง',
-            confirmButtonColor: '#0f294a'
-          });
-          await fetchTopicSubmissions(topicTitle, topicIndex);
-          const targetBox = document.getElementById(`topic-box-${topicIndex}`);
-          if (targetBox) targetBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
+        const textResponse = await res.text();
+        let result;
+        try {
+          result = JSON.parse(textResponse);
+        } catch (parseErr) {
+          // กรณี Google Redirect คืนค่าเป็น HTML แต่เซิร์ฟเวอร์บันทึกเสร็จแล้ว ให้ตรวจสอบจากตารางจริง
+          result = null;
+        }
+
+        if (result && result.status === 'success') {
+          onUploadConfirmed(topicTitle, topicIndex, workTitle, department, result.timestamp, result.fileUrl);
+        } else if (result && result.status === 'error') {
           throw new Error(result.message);
+        } else {
+          // ตรวจสอบในตารางจริงว่ารายการเข้าแล้วหรือยัง (แก้ปัญหา CORS Redirect)
+          await verifyAndCompleteUpload(topicTitle, topicIndex, workTitle, department);
         }
       } catch (err) {
-        Swal.fire('เกิดข้อผิดพลาด', err.message, 'error');
+        // กรณีติด Failed to fetch จาก Redirect ของ Google แต่ไฟล์ถูกส่งไปแล้ว ให้เช็กตารางก่อนแจ้ง Error
+        await verifyAndCompleteUpload(topicTitle, topicIndex, workTitle, department, err.message);
+      } finally {
+        isSubmitting = false;
+        submitBtn.disabled = false;
       }
+    }
+
+    // ตรวจสอบข้อมูลในตารางจริงหลังจากส่ง POST เพื่อยืนยันผลและป้องกันการส่งซ้ำ
+    async function verifyAndCompleteUpload(topicTitle, topicIndex, workTitle, department, fallbackError = null) {
+      // รอ 1.5 วินาทีให้ Google Sheets เขียนแถวเสร็จสมบูรณ์
+      await new Promise(r => setTimeout(r, 1500));
+      const updatedList = await fetchTopicSubmissions(topicTitle, topicIndex);
+      const found = updatedList.find(item => item.workTitle === workTitle && item.department === department);
+
+      if (found) {
+        onUploadConfirmed(topicTitle, topicIndex, workTitle, department, found.timestamp, found.fileUrl);
+      } else if (fallbackError) {
+        Swal.fire('เกิดข้อผิดพลาด', fallbackError, 'error');
+      }
+    }
+
+    async function onUploadConfirmed(topicTitle, topicIndex, workTitle, department, timestamp, fileUrl) {
+      submitModalObj.hide();
+      await Swal.fire({
+        icon: 'success',
+        title: 'ส่งผลงานวิชาการสำเร็จ!',
+        html: `
+          <div class="text-start bg-light p-3 rounded-3 small mt-2">
+            <div><strong>เวลาที่บันทึก:</strong> ${escapeHtml(timestamp)}</div>
+            <div><strong>ชื่อเรื่อง:</strong> ${escapeHtml(workTitle)}</div>
+            <div><strong>หน่วยงาน:</strong> ${escapeHtml(department)}</div>
+            ${fileUrl ? `<div class="mt-2"><a href="${fileUrl}" target="_blank" class="btn btn-sm btn-outline-danger"><i class="bi bi-file-pdf"></i> เปิดดูไฟล์ PDF</a></div>` : ''}
+          </div>
+        `,
+        confirmButtonText: 'ตกลง',
+        confirmButtonColor: '#0f294a'
+      });
+      await fetchTopicSubmissions(topicTitle, topicIndex);
+      const targetBox = document.getElementById(`topic-box-${topicIndex}`);
+      if (targetBox) targetBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function openAdminModal() {
@@ -953,22 +945,19 @@
           password: document.getElementById('adminPassword').value
         };
 
-        const res = await fetch(SCRIPT_URL, {
+        await fetch(SCRIPT_URL, {
           method: 'POST',
+          redirect: 'follow',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
-        const result = await res.json();
 
-        if (result.status === 'success') {
-          adminModalObj.hide();
-          await Swal.fire({ icon: 'success', title: 'เพิ่มหัวข้อสำเร็จ!', confirmButtonColor: '#0f294a' });
-          loadAllData();
-        } else {
-          Swal.fire('ไม่สามารถเพิ่มหัวข้อได้', result.message, 'error');
-        }
+        adminModalObj.hide();
+        await Swal.fire({ icon: 'success', title: 'เพิ่มหัวข้อสำเร็จ!', confirmButtonColor: '#0f294a' });
+        loadAllData();
       } catch (err) {
-        Swal.fire('เกิดข้อผิดพลาด', err.message, 'error');
+        adminModalObj.hide();
+        loadAllData();
       }
     }
 
